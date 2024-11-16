@@ -26,52 +26,59 @@ Things you may want to cover:
 ## users テーブル
 | Column             | Type   | Options     |
 | ------------------ | ------ | ----------- |
-| name               | string | null: false |
+| nickname           | string | null: false |
 | email              | string | null: false, unique: true |
 | encrypted_password | string | null: false |
+| last_name          | string | null: false |
+| first_name         | string | null: false |
+| last_name_kana     | string | null: false |
+| first_name_kana    | string | null: false |
 | birthday           | date   | null: false |
 
 ### Association
 - has_many :items
-- has_many :comments
-- has_many :buyers
+- has_many :purchases
+
 
 ## items テーブル
-| Column                 | Type       | Options     |
-| ---------------------- | ---------- | ----------- |
-| title                  | string     | null: false |
-| image                  | string     | null: false |
-| price                  | string     | null: false |
-| category               | string     | null: false |
-| condition              | string     | null: false |
-| shipping_cost          | string     | null: false |
-| shipping_origin        | string     | null: false |
-| shipping_date_estimate | string     | null: false |
-| user                   | references | null: false, foreign_key: true |
+| Column                    | Type       | Options     |
+| ------------------------- | ---------- | ----------- |
+| title                     | string     | null: false |
+| price                     | integer    | null: false |
+| category_id               | integer    | null: false |
+| condition_id              | integer    | null: false |
+| shipping_cost_id          | integer    | null: false |
+| shipping_origin_id        | integer    | null: false |
+| shipping_date_estimate_id | integer    | null: false |
+| user                      | references | null: false, foreign_key: true |
 
 ### Association
 - belongs_to :user
-- has_many :comments
-- has_one :buyers
+- has_one :purchase
 
-## comments テーブル
+
+## purchases テーブル
 | Column | Type       | Options                        |
 | ------ | ---------- | ------------------------------ |
-| text   | string     | null: false                    |
 | user   | references | null: false, foreign_key: true |
 | item   | references | null: false, foreign_key: true |
 
 ### Association
 - belongs_to :user
-- belongs_to :items
+- belongs_to :item
+- has_one :address
 
-## buyers テーブル
-| Column           | Type       | Options                        |
-| ---------------- | ---------- | ------------------------------ |
-| shipping_address | string     | null: false                    |
-| user             | references | null: false, foreign_key: true |
-| item             | references | null: false, foreign_key: true |
+
+## addresses テーブル
+| Column        | Type       | Options     |
+| ------------- | ---------- | ----------- |
+| postal_code   | string     | null: false |
+| prefecture_id | integer    | null: false |
+| city          | string     | null: false |
+| address_line1 | string     | null: false |
+| address_line2 | string     |             |
+| phone_number  | string     | null: false |
+| purchase      | references | null: false, foreign_key: true |
 
 ### Association
-- belongs_to :user
-- belongs_to :items
+- belongs_to :purchase
