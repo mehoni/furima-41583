@@ -44,6 +44,7 @@ Things you may want to cover:
 | Column                    | Type       | Options     |
 | ------------------------- | ---------- | ----------- |
 | title                     | string     | null: false |
+| description               | text       | null: false |
 | price                     | integer    | null: false |
 | category_id               | integer    | null: false |
 | condition_id              | integer    | null: false |
@@ -70,15 +71,15 @@ Things you may want to cover:
 
 
 ## addresses テーブル
-| Column        | Type       | Options     |
-| ------------- | ---------- | ----------- |
-| postal_code   | string     | null: false |
-| prefecture_id | integer    | null: false |
-| city          | string     | null: false |
-| address_line1 | string     | null: false |
-| address_line2 | string     |             |
-| phone_number  | string     | null: false |
-| purchase      | references | null: false, foreign_key: true |
+| Column             | Type       | Options     |
+| ------------------ | ---------- | ----------- |
+| postal_code        | string     | null: false |
+| shipping_origin_id | integer    | null: false |
+| city               | string     | null: false |
+| street_address     | string     | null: false |
+| building_name      | string     |             |
+| phone_number       | string     | null: false |
+| purchase           | references | null: false, foreign_key: true |
 
 ### Association
 - belongs_to :purchase
