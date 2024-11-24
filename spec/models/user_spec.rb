@@ -2,72 +2,94 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   describe 'ユーザー新規登録' do
-    # ニックネームが必須であること
-    it 'is invalid without a nickname' do
-      user = User.new(nickname: nil)
-      expect(user).to be_invalid
-      expect(user.errors[:nickname]).to include("can't be blank")
+    let(:valid_attributes) do
+      {
+        nickname: 'test',
+        email: 'test@example.com',
+        password: 'Password1',
+        password_confirmation: 'Password1',
+        last_name: '山田',
+        first_name: '太郎',
+        last_name_kana: 'ヤマダ',
+        first_name_kana: 'タロウ',
+        birthday: '1990-01-01'
+      }
     end
 
-    # メールアドレスが必須であること
-    it 'is invalid with a duplicate email' do
-      # 必須フィールドを入力
-      user1 = User.create!(nickname: 'test', email: 'test@example.com', password: 'Password1', password_confirmation: 'Password1',
-                           last_name: '山田', first_name: '太郎', last_name_kana: 'ヤマダ', first_name_kana: 'タロウ', birthday: '1990-01-01')
-      user2 = User.new(nickname: 'test', email: 'test@example.com', password: 'Password1', password_confirmation: 'Password1',
-                       last_name: '山田', first_name: '太郎', last_name_kana: 'ヤマダ', first_name_kana: 'タロウ', birthday: '1990-01-01')
-      expect(user2).to be_invalid
-      expect(user2.errors[:email]).to include('has already been taken')
+    let(:user) { User.new(valid_attributes) }
+
+    before do
+      User.create!(valid_attributes)
     end
 
-    # メールアドレスが一意性であること
-    it 'is invalid with a duplicate email' do
-      # 最初のユーザー作成（重複するメールアドレスを使用）
-      user1 = User.create!(nickname: 'test', email: 'test@example.com', password: 'Password1', password_confirmation: 'Password1',
-                           last_name: '山田', first_name: '太郎', last_name_kana: 'ヤマダ', first_name_kana: 'タロウ', birthday: '1990-01-01')
-
-      # 2番目のユーザー作成（メールアドレスが重複している）
-      user2 = User.new(nickname: 'test2', email: 'test@example.com', password: 'Password2', password_confirmation: 'Password2',
-                       last_name: '佐藤', first_name: '花子', last_name_kana: 'サトウ', first_name_kana: 'ハナコ', birthday: '1992-02-02')
-
-      # 重複したメールアドレスでユーザーが作成できないことを確認
-      expect(user2).to be_invalid
-      expect(user2.errors[:email]).to include('has already been taken')
+    context '正常系' do
+      it '全ての必須項目が正しく入力されていれば登録できる' do
+        new_user = User.new(
+          nickname: 'new_test',
+          email: 'new_test@example.com',
+          password: 'Password2',
+          password_confirmation: 'Password2',
+          last_name: '佐藤',
+          first_name: '花子',
+          last_name_kana: 'サトウ',
+          first_name_kana: 'ハナコ',
+          birthday: '1992-02-02'
+        )
+        expect(new_user).to be_valid
+      end
     end
 
-    # メールアドレスは@を含む必要があること
-    it 'is invalid with an email without @ symbol' do
-      user = User.new(email: 'testexample.com', password: 'Password1', password_confirmation: 'Password1')
-      expect(user).to be_invalid
-      expect(user.errors[:email]).to include('is invalid')
-    end
+    context '異常系' do
+      it 'ニックネームがない場合は登録できない' do
+        user.nickname = nil
+        expect(user).to be_invalid
+        expect(user.errors[:nickname]).to include("can't be blank")
+      end
 
-    # パスワードが必須であること
-    it 'is invalid without a password' do
-      user = User.new(password: nil, password_confirmation: nil)
-      expect(user).to be_invalid
-      expect(user.errors[:password]).to include("can't be blank")
-    end
+      it 'メールアドレスが重複している場合は登録できない' do
+        duplicate_user = User.new(valid_attributes)
+        expect(duplicate_user).to be_invalid
+        expect(duplicate_user.errors[:email]).to include('has already been taken')
+      end
 
-    # パスワードは6文字以上であること
-    it 'is invalid with a password shorter than 6 characters' do
-      user = User.new(password: 'short', password_confirmation: 'short')
-      expect(user).to be_invalid
-      expect(user.errors[:password]).to include('is too short (minimum is 6 characters)')
-    end
+      it 'メールアドレスが@を含まない場合は登録できない' do
+        user.email = 'testexample.com'
+        expect(user).to be_invalid
+        expect(user.errors[:email]).to include('is invalid')
+      end
 
-    # パスワードは半角英数字混合であること
-    it 'is invalid with a password that does not contain both letters and numbers' do
-      user = User.new(password: 'password', password_confirmation: 'password')
-      expect(user).to be_invalid
-      expect(user.errors[:password]).to include('は英字と数字の両方を含む必要があります')
-    end
+      it 'パスワードが空の場合は登録できない' do
+        user.password = nil
+        user.password_confirmation = nil
+        expect(user).to be_invalid
+        expect(user.errors[:password]).to include("can't be blank")
+      end
 
-    # パスワードとパスワード（確認）が一致していること
-    it 'is invalid if password and password_confirmation do not match' do
-      user = User.new(password: 'Password1', password_confirmation: 'DifferentPassword')
-      expect(user).to be_invalid
-      expect(user.errors[:password_confirmation]).to include("doesn't match Password")
+      it 'パスワードが6文字未満の場合は登録できない' do
+        user.password = 'short'
+        user.password_confirmation = 'short'
+        expect(user).to be_invalid
+        expect(user.errors[:password]).to include('is too short (minimum is 6 characters)')
+      end
+
+      it 'パスワードが半角英数字混合でない場合は登録できない' do
+        user.password = 'password'
+        user.password_confirmation = 'password'
+        expect(user).to be_invalid
+        expect(user.errors[:password]).to include('は英字と数字の両方を含む必要があります')
+      end
+
+      it 'パスワードとパスワード確認が一致していない場合は登録できない' do
+        user.password_confirmation = 'DifferentPassword'
+        expect(user).to be_invalid
+        expect(user.errors[:password_confirmation]).to include("doesn't match Password")
+      end
+
+      it '誕生日が空の場合は登録できない' do
+        user.birthday = nil
+        expect(user).to be_invalid
+        expect(user.errors[:birthday]).to include("can't be blank")
+      end
     end
   end
 end
