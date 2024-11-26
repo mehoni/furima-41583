@@ -8,13 +8,13 @@ class ItemsController < ApplicationController
   end
 
   def create
-    Item.create(Item_params)
+    Item.create(item_params)
     redirect_to '/'
   end
 
   private
 
-  def Item_params
+  def item_params
     params.require(:item).permit(:name, :image, :text)
   end
 end
