@@ -18,7 +18,7 @@ class Item < ApplicationRecord
   validates :shipping_cost_id, numericality: { other_than: 1, message: "can't be blank" }
   validates :shipping_origin_id, numericality: { other_than: 1, message: "can't be blank" }
   validates :shipping_date_estimate_id, numericality: { other_than: 1, message: "can't be blank" }
-  validates :price, presence: true
-  validates :price, numericality: { greater_than_or_equal_to: 300, less_than_or_equal_to: 9_999_999 }
-  validates :price, format: { with: /\A[0-9]+\z/, message: 'は半角数字のみで入力してください' }
+  validates :price, presence: true, numericality: { only_integer: true, message: 'は半角数字のみで入力してください' }
+  validates :price, numericality: { greater_than_or_equal_to: 300, message: 'must be greater than or equal to 300' }
+  validates :price, numericality: { less_than_or_equal_to: 9_999_999, message: 'must be less than or equal to 9999999' }
 end

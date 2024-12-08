@@ -11,7 +11,7 @@ class ItemsController < ApplicationController
   def create
     @item = Item.new(item_params.merge(user_id: current_user.id))
     if @item.save
-      redirect_to items_path(@item), notice: '商品を出品しました！'
+      redirect_to items_path(@item)
     else
       render :new
     end
