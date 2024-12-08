@@ -13,6 +13,7 @@ class ItemsController < ApplicationController
     if @item.save
       redirect_to items_path(@item)
     else
+      Rails.logger.info @item.errors.full_messages # エラー内容をターミナルに出力
       render :new
     end
   end
