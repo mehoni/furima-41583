@@ -144,10 +144,10 @@
             </div>
             <div class='item-info'>
               <h3 class='item-name'>
-                <%= "商品名" %>
+                <%= item.title %>
               </h3>
               <div class='item-price'>
-                <span><%= "販売価格" %>円<br><%= '配送料負担' %></span>
+                <span><%= item.price %>円<br><%= item.shipping_cost_id == 1 ? '着払い(購入者負担)' : '送料込み(出品者負担)' %></span>
                 <div class='star-btn'>
                   <%= image_tag "star.png", class:"star-icon" %>
                   <span class='star-count'>0</span>
