@@ -16,7 +16,7 @@ class ItemsController < ApplicationController
     if @item.save
       redirect_to items_path(@item)
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -30,9 +30,11 @@ class ItemsController < ApplicationController
   end
 
   def update
-    item = Item.find(params[:id])
-    item.update(item_params)
-    redirect_to root_path
+    if @item.update(item_params)
+      redirect_to @item
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   private
@@ -44,7 +46,7 @@ class ItemsController < ApplicationController
   def redirect_unless_owner
     return if current_user.id == @item.user_id
 
-    redirect_to root_path, alert: 'アクセス権限がありません。'
+    redirect_to root_path
   end
 
   def item_params
