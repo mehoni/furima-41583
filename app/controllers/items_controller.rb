@@ -1,5 +1,8 @@
 class ItemsController < ApplicationController
   before_action :authenticate_user!, only: [:new, :create, :edit, :update]
+  before_action :set_item, only: [:edit, :update]
+  before_action :redirect_unless_owner, only: [:edit, :update]
+
   def index
     @items = Item.order(created_at: :desc)
   end
@@ -33,6 +36,16 @@ class ItemsController < ApplicationController
   end
 
   private
+
+  def set_item
+    @item = Item.find(params[:id])
+  end
+
+  def redirect_unless_owner
+    return if current_user.id == @item.user_id
+
+    redirect_to root_path, alert: 'アクセス権限がありません。'
+  end
 
   def item_params
     params.require(:item).permit(:image, :title, :description, :category_id, :condition_id, :shipping_cost_id,
