@@ -7,6 +7,9 @@ class OrdersController < ApplicationController
 
   def create
     @item = Item.find(params[:item_id])
+    @order = Order.create(order_params)
+    Address.create(address_params)
+    redirect_to root_path
     @order = Order.new(order_params)
     if @order.valid?
       pay_item
@@ -22,6 +25,11 @@ class OrdersController < ApplicationController
 
   def order_params
     params.require(:order).permit(:price).merge(token: params[:token])
+  end
+
+  def address_params
+    params.permit(:postal_code, :shipping_origin_id, :city, :street_address, :building_name,
+                  :phone_number).merge(order_id: @order.id)
   end
 
   def pay_item
