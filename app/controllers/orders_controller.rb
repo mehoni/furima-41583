@@ -17,12 +17,10 @@ class OrdersController < ApplicationController
       if @order_address.save
         redirect_to root_path
       else
-        Rails.logger.error "Failed to save order_address: #{@order_address.errors.full_messages.join(', ')}"
         flash[:alert] = '購入処理に失敗しました。入力内容を確認してください。'
         render 'index', status: :unprocessable_entity
       end
     else
-      Rails.logger.error "Validation failed: #{@order_address.errors.full_messages.join(', ')}"
       flash.now[:alert] = '入力内容に不備があります。再度確認してください。'
       render 'index', status: :unprocessable_entity
     end
