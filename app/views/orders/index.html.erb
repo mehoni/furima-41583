@@ -34,6 +34,18 @@
     <%# /支払額の表示 %>
 
     <%= form_with model: @order_address, url: item_orders_path(@item), id: 'charge-form', local: true do |f| %>
+
+    <%# エラーメッセージの表示 %>
+    <% if @order_address.errors.any? %>
+      <div class="error-messages">
+        <ul>
+          <% @order_address.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
     <%# カード情報の入力 %>
     <div class='credit-card-form'>
       <h1 class='info-input-haedline'>

@@ -25,6 +25,7 @@ class OrdersController < ApplicationController
       end
     else
       Rails.logger.error "Validation failed: #{@order_address.errors.full_messages.join(', ')}"
+      flash.now[:alert] = '入力内容に不備があります。再度確認してください。'
       render 'index', status: :unprocessable_entity
     end
   end
