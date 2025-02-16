@@ -20,6 +20,18 @@ RSpec.describe OrderAddress, type: :model do
     end
 
     context '購入ができないとき' do
+      it 'user_idが空だと保存できない' do
+        @order_address.user_id = nil
+        @order_address.valid?
+        expect(@order_address.errors.full_messages).to include("User can't be blank")
+      end
+
+      it 'item_idが空だと保存できない' do
+        @order_address.item_id = nil
+        @order_address.valid?
+        expect(@order_address.errors.full_messages).to include("Item can't be blank")
+      end
+
       it '郵便番号が空だと保存できない' do
         @order_address.postal_code = ''
         @order_address.valid?

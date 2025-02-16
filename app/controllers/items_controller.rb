@@ -25,8 +25,6 @@ class ItemsController < ApplicationController
   end
 
   def edit
-    @item = Item.find(params[:id])
-
     return unless @item.user != current_user || @item.sold_out?
 
     redirect_to root_path, alert: 'この商品は編集できません。'
