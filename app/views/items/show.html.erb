@@ -9,7 +9,7 @@
     <div class="item-img-content">
       <%= image_tag @item.image, class:"item-box-img" %>
 
-      <% if @item.sold_out %>
+      <% if @item.sold_out? %>
         <div class='sold-out'>
           <span>Sold Out!!</span>
         </div>
@@ -25,7 +25,7 @@
       </span>
     </div>
 
-    <% if user_signed_in? && !@item.sold_out %>
+    <% if user_signed_in? && !@item.sold_out? %>
       <% if current_user.id == @item.user_id %>
         <%= link_to "商品の編集", edit_item_path(@item.id), method: :get, class: "item-red-btn" %>
         <p class="or-text">or</p>
