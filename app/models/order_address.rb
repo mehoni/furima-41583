@@ -12,7 +12,7 @@ class OrderAddress
     validates :street_address
     validates :phone_number, format: { with: /\A[0-9]{10,11}\z/, message: 'is invalid. Phone number should be 10 or 11 digits' }
   end
-  validates :shipping_origin_id, numericality: { other_than: 0, message: "can't be blank" }
+  validates :shipping_origin_id, numericality: { other_than: 1, message: "can't be blank" }
 
   def save
     item = Item.find_by(id: item_id)
