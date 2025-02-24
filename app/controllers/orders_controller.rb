@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!, only: [:index, :create]
-  before_action :set_gon_public_key, only: [:index]
+  before_action :set_gon_public_key, only: [:index, :create]
   before_action :set_item, only: [:index, :create]
   before_action :redirect_if_seller, only: [:index, :create]
   before_action :redirect_if_sold_out, only: [:index, :create]
@@ -12,14 +12,9 @@ class OrdersController < ApplicationController
   def create
     @order_address = OrderAddress.new(order_params)
 
-    if @order_address.valid?
+    if @order_address.valid? && @order_address.save
       pay_item
-      if @order_address.save
-        redirect_to root_path
-      else
-        flash[:alert] = '購入処理に失敗しました。入力内容を確認してください。'
-        render 'index', status: :unprocessable_entity
-      end
+      redirect_to root_path
     else
       flash.now[:alert] = '入力内容に不備があります。再度確認してください。'
       render 'index', status: :unprocessable_entity

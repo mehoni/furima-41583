@@ -1,30 +1,31 @@
-document.addEventListener('DOMContentLoaded', function() {
+function price() {
   const priceInput = document.getElementById('item-price');
   const taxPriceElement = document.getElementById('add-tax-price');
   const profitElement = document.getElementById('profit');
 
-  // priceInput が存在する場合にのみ処理を実行
-  if (priceInput) {
-    // 価格計算を実行する関数
-    function price() {
-      const price = parseFloat(priceInput.value);
+  if (!priceInput) return;
 
-      if (!isNaN(price) && price >= 300 && price <= 9999999) {
-        const tax = Math.floor(price * 0.1);  // 販売手数料
-        const profit = Math.floor(price - tax); // 販売利益
+  function updatePrice() {
+    const price = parseFloat(priceInput.value);
 
-        if (taxPriceElement) taxPriceElement.textContent = tax;  // 手数料
-        if (profitElement) profitElement.textContent = profit;  // 利益
-      } else {
-        if (taxPriceElement) taxPriceElement.textContent = '';  // 範囲外の場合
-        if (profitElement) profitElement.textContent = '';  // 範囲外の場合
-      }
+    if (isNaN(price) || price < 300 || price > 9999999) {
+      taxPriceElement && (taxPriceElement.textContent = '');
+      profitElement && (profitElement.textContent = '');
+      return;
     }
 
-    priceInput.addEventListener('input', price); // 価格入力時に価格計算を実行
+    const tax = Math.floor(price * 0.1);
+    const profit = Math.floor(price - tax);
 
-    // Turboでページ遷移時にも再計算
-    window.addEventListener("turbo:load", price);
-    window.addEventListener("turbo:render", price);
+    taxPriceElement && (taxPriceElement.textContent = tax);
+    profitElement && (profitElement.textContent = profit);
   }
-});
+
+  priceInput.addEventListener('input', updatePrice);
+  updatePrice(); // ページロード時にも適用
+}
+
+// Turboのイベントをグローバルに登録
+document.addEventListener("turbo:load", price);
+document.addEventListener("turbo:render", price);
+document.addEventListener("DOMContentLoaded", price);
